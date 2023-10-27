@@ -18,7 +18,8 @@ use Throwable;
 class BookService
 {
     /**
-     * Does the task of importing data from the API Service and pushing it into Database
+     * Does the task of importing data from the API Service and pushing it into Database.
+     * Also, added a chunk of 10 items each.
      *
      * @return void
      */
@@ -52,7 +53,8 @@ class BookService
     }
 
     /**
-     * Adding the data
+     * Adding the data 10 at a time.
+     * Discarding using the model just because it could impact time using Eloquent's overhead
      *
      * @return void
      */
