@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Services\BookService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
+/**
+ * Book Controller resource
+ */
 class BookController extends Controller
 {
     /**
@@ -15,8 +16,6 @@ class BookController extends Controller
     public function index()
     {
         //
-        $response = Http::get('https://fakerapi.it/api/v1/books?_quantity=100');
-        BookService::import(new Book(), $response->collect());
 
     }
 

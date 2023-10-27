@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * BookService to manage the book based services
+ */
 class BookService
 {
     /**
@@ -19,7 +22,7 @@ class BookService
      *
      * @return void
      */
-    public static function import(Book $book, Collection $books)
+    public static function import(Collection $books)
     {
         // Log::info(json_encode($books, JSON_PRETTY_PRINT));
         // dd($data);
@@ -57,7 +60,7 @@ class BookService
     {
         try {
             DB::beginTransaction();
-            DB::table('books')->insert($data->toArray());
+            DB::table('books')->insertOrIgnore($data->toArray());
             DB::commit();
 
             Log::error(json_encode($data->toArray(), JSON_PRETTY_PRINT));
