@@ -1,9 +1,9 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 const props = defineProps({
     mustVerifyEmail: {
@@ -13,36 +13,35 @@ const props = defineProps({
         type: String,
     },
     book: {
-        type: Object
-    }
+        type: Object,
+    },
 });
 
 const user = usePage().props.auth.user;
 
-
-
 const form = useForm({
-    // title: props.book.title,
-    // author: props.book.author,
-    // genre: props.book.genre,
-    // description: props.book.description,
-    // isbn: props.book.isbn,
-    // image: props.book.image,
-    // email: user.email,
+    title: "",
+    author: "",
+    genre: "",
+    description: "",
+    isbn: "",
+    image: "",
+    publisher: "",
 });
 </script>
 
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Update Book</h2>
+            <h2 class="text-lg font-medium text-gray-900">Create Book</h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                Update Book Details
-            </p>
+            <p class="mt-1 text-sm text-gray-600">Create Book Details</p>
         </header>
 
-        <form @submit.prevent="form.post(route('books.store'))" class="mt-6 space-y-6">
+        <form
+            @submit.prevent="form.post(route('books.store'))"
+            class="mt-6 space-y-6"
+        >
             <div>
                 <InputLabel for="title" value="title" />
 
@@ -94,7 +93,7 @@ const form = useForm({
             <div>
                 <InputLabel for="description" value="description" />
 
-                <TextInput
+                <textarea
                     id="description"
                     type="text"
                     class="mt-1 block w-full"
@@ -139,6 +138,22 @@ const form = useForm({
                 <InputError class="mt-2" :message="form.errors.image" />
             </div>
 
+            <div>
+                <InputLabel for="publisher" value="publisher" />
+
+                <TextInput
+                    id="publisher"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.publisher"
+                    required
+                    autofocus
+                    autocomplete="publisher"
+                />
+
+                <InputError class="mt-2" :message="form.errors.publisher" />
+            </div>
+
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
@@ -148,7 +163,12 @@ const form = useForm({
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    <p
+                        v-if="form.recentlySuccessful"
+                        class="text-sm text-gray-600"
+                    >
+                        Saved.
+                    </p>
                 </Transition>
             </div>
         </form>

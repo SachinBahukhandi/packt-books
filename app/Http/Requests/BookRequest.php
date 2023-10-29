@@ -22,7 +22,6 @@ class BookRequest extends FormRequest
      */
     public function rules(): array
     {
-        Log::error($this->book->id);
         /**
          * For updating the book
          */

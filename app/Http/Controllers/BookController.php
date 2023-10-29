@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -38,7 +40,7 @@ class BookController extends Controller
 
             $data['books'] = $data['books']->map(function ($book) {
                 $user = request()->user();
-                if ($user) {
+                if ($user && $user->is_admin) {
                     $book->edit = route('books.edit', $book->id);
                     $book->delete = route('books.destroy', $book->id);
                 }
@@ -68,14 +70,37 @@ class BookController extends Controller
     public function create()
     {
         //
+        return Inertia::render(
+            'Books/Create'
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
         //
+        try {
+            $data = $request->all();
+            $data['published'] = Carbon::now();
+            Book::create($data);
+
+            if (request()->expectsJson()) {
+
+
+                $books = [
+                    'data' => $data['books'],
+                    'recordsTotal' => $data['books']->count(),
+                    'recordsFiltered' => 10,
+                    'draw' => time(),
+                ];
+
+                return response()->json($books);
+            }
+        } catch (Exception $e) {
+            return response()->json($r->getMessage());
+        }
     }
 
     /**

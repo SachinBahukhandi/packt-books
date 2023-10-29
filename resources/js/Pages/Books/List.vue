@@ -63,7 +63,7 @@ onMounted(function () {
     }
 });
 let columns = [...props.columns];
-if (user) {
+if (user && user.is_admin) {
     columns = [...columns, "edit", "delete"];
 }
 
@@ -77,7 +77,7 @@ columns = columns.map((column) => {
         };
     }
 
-    if (user) {
+    if (user && user.is_admin) {
         if (column == "edit") {
             obj.render = function (data, type, row, meta) {
                 return `<a target='blank' href='${data}'><button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Edit</button></a>`;
@@ -103,6 +103,14 @@ columns = columns.map((column) => {
     <AuthenticatedLayout v-if="user">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <a target="blank" :href="route('books.create')"
+                v-if="user.is_admin"
+                    ><button
+                        class="bg-teal-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mb-2"
+                    >
+                        Create Record
+                    </button></a
+                >
                 <div class="overflow-scroll shadow-sm sm:rounded-lg">
                     <DataTable
                         class="display"
@@ -135,7 +143,9 @@ columns = columns.map((column) => {
         <div class="min-h-screen min-w-full bg-gray-100">
             <div class="py-12 w-full">
                 <div class="mx-auto sm:px-6 lg:px-8">
-                    <div class="overflow-scroll shadow-sm sm:rounded-lg min-w-full">
+                    <div
+                        class="overflow-scroll shadow-sm sm:rounded-lg min-w-full"
+                    >
                         <DataTable
                             class="display"
                             :columns="columns"
