@@ -35,11 +35,56 @@ const table = ref();
 
 onMounted(function () {
     dt = table.value.dt;
+    dt.on(
+        "click",
+        "button.editor-delete",
+        function (e, child_dt, type, indexes) {
+            e.preventDefault();
+            let that = this;
+            let confirmation = confirm("Confirm removal?");
+            let url = e.currentTarget.getAttribute("data-url");
+            if (confirmation && url) {
+                axios
+                    .delete(url, {
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                    })
+                    .then((res) => {
+                        parent = e.currentTarget.parentNode.parentNode;
+                        dt.row(parent).remove().draw();
+                    });
+            }
+        }
+    );
 });
-const columns = props.columns.map((column) => {
-    return {
+let columns = [...props.columns, "edit", "delete"];
+
+function helloWorld() {
+    console.log("hello");
+}
+columns = columns.map((column) => {
+    let obj = {
         data: column,
     };
+    if (column == "image") {
+        obj.render = function (data, type, row, meta) {
+            return `<img src='${data}' />`;
+        };
+    }
+
+    if (column == "edit") {
+        obj.render = function (data, type, row, meta) {
+            return `<a target='blank' href='${data}'><button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Edit</button></a>`;
+        };
+    }
+
+    if (column == "delete") {
+        obj.render = function (data, type, row, meta) {
+            return `<button class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded editor-delete" data-url=${data}>Delete</button>`;
+        };
+    }
+    return obj;
 });
 </script>
 
@@ -66,26 +111,16 @@ const columns = props.columns.map((column) => {
                     >
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Genre</th>
-                                <th>Description</th>
-                                <th>isbn</th>
-                                <th>image</th>
-                                <th>published</th>
-                                <th>publisher</th>
+                                <th v-for="column in columns" :key="column">
+                                    {{ column.data.toUpperCase() }}
+                                </th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Genre</th>
-                                <th>Description</th>
-                                <th>isbn</th>
-                                <th>image</th>
-                                <th>published</th>
-                                <th>publisher</th>
+                                <th v-for="column in columns" :key="column">
+                                    {{ column.data.toUpperCase() }}
+                                </th>
                             </tr>
                         </tfoot>
                     </DataTable>

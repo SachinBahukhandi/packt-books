@@ -19,16 +19,15 @@ const props = defineProps({
 
 const user = usePage().props.auth.user;
 
-const book = props.book;
-console.log(props.book);
+
 
 const form = useForm({
-    title: props.book.title,
-    author: props.book.author,
-    genre: props.book.genre,
-    description: props.book.description,
-    isbn: props.book.isbn,
-    image: props.book.image,
+    // title: props.book.title,
+    // author: props.book.author,
+    // genre: props.book.genre,
+    // description: props.book.description,
+    // isbn: props.book.isbn,
+    // image: props.book.image,
     // email: user.email,
 });
 </script>
@@ -43,7 +42,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('books.update',{ book: props.book}))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.post(route('books.store'))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="title" value="title" />
 

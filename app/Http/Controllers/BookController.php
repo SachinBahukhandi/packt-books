@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookRequest;
 use App\Models\Book;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 /**
@@ -26,23 +27,32 @@ class BookController extends Controller
             'isbn',
             'image',
             'published',
-            'publisher'
+            'publisher',
         ];
         $data = [
             'books' => Book::all(),
-            'columns' => $columns
+            'columns' => $columns,
 
         ];
         if (request()->expectsJson()) {
 
+            $data['books'] = $data['books']->map(function ($book) {
+                $user = request()->user();
+                $book->edit = route('books.edit', $book->id);
+                $book->delete = route('books.destroy', $book->id);
+
+                return $book;
+            });
             $books = [
-                'data' =>$data['books'],
-                'recordsTotal' =>  $data['books']->count(),
-                'recordsFiltered'=> 10,
-                'draw' => time()
+                'data' => $data['books'],
+                'recordsTotal' => $data['books']->count(),
+                'recordsFiltered' => 10,
+                'draw' => time(),
             ];
+
             return response()->json($books);
         }
+
         return Inertia::render(
             'Books/List',
             $data
@@ -79,14 +89,21 @@ class BookController extends Controller
     public function edit(Book $book)
     {
         //
+        return Inertia::render(
+            'Books/Edit',
+            [
+                'book' => $book,
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(BookRequest $request, Book $book)
     {
         //
+
     }
 
     /**
@@ -95,5 +112,24 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         //
+        $response = [
+            'success' => true,
+            'message' => 'Deleted Successfully!',
+        ];
+
+        try {
+            $book->delete();
+        } catch (QueryException $e) {
+            $response = [
+                'success' => false,
+                'message' => 'Deletion Unsuccessful!',
+            ];
+        }
+
+        if (request()->expectsJson()) {
+            return response()->json($response);
+        } else {
+            return redirect()->back();
+        }
     }
 }
