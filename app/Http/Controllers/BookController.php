@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 /**
  * Book Controller resource
@@ -16,7 +18,24 @@ class BookController extends Controller
     public function index()
     {
         //
+        $columns = [
+            'title',
+            'author',
+            'genre',
+            'description',
+            'isbn',
+            'image',
+            'published',
+            'publisher'
+        ];
+        return Inertia::render(
+            'Books/List',
+            [
+                'books' => Book::paginate(),
+                'columns' => $columns
 
+            ]
+        );
     }
 
     /**
