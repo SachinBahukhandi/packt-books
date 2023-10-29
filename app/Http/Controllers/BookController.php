@@ -38,8 +38,11 @@ class BookController extends Controller
 
             $data['books'] = $data['books']->map(function ($book) {
                 $user = request()->user();
-                $book->edit = route('books.edit', $book->id);
-                $book->delete = route('books.destroy', $book->id);
+                if ($user) {
+                    $book->edit = route('books.edit', $book->id);
+                    $book->delete = route('books.destroy', $book->id);
+                }
+
 
                 return $book;
             });
