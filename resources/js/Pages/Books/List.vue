@@ -6,7 +6,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 import DataTable from "datatables.net-vue3";
@@ -30,13 +30,17 @@ const props = defineProps({
     },
 });
 
+let dt = null;
+const table = ref();
 
+onMounted(function () {
+    dt = table.value.dt;
+});
 const columns = props.columns.map((column) => {
     return {
         data: column,
     };
 });
-const data = props.books.data;
 </script>
 
 <template>
@@ -54,8 +58,11 @@ const data = props.books.data;
                 <div class="overflow-scroll shadow-sm sm:rounded-lg">
                     <DataTable
                         class="display"
-                        :options="{ data: props.books.data }"
                         :columns="columns"
+                        :ajax="{ url: '/api/books' }"
+                        :serverSide="true"
+                        :processing="true"
+                        ref="table"
                     >
                         <thead>
                             <tr>

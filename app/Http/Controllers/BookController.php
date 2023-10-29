@@ -28,13 +28,24 @@ class BookController extends Controller
             'published',
             'publisher'
         ];
+        $data = [
+            'books' => Book::all(),
+            'columns' => $columns
+
+        ];
+        if (request()->expectsJson()) {
+
+            $books = [
+                'data' =>$data['books'],
+                'recordsTotal' =>  $data['books']->count(),
+                'recordsFiltered'=> 10,
+                'draw' => time()
+            ];
+            return response()->json($books);
+        }
         return Inertia::render(
             'Books/List',
-            [
-                'books' => Book::paginate(),
-                'columns' => $columns
-
-            ]
+            $data
         );
     }
 
